@@ -43,7 +43,7 @@ function createMinisters(list,issues){
 }
 
 function createParties(parties, issues){
-  let party, issue, stance=0, stances={};
+  let partyName, issue, stances={};
   for (partyName in parties){
     let representation = parties[partyName];
     for (issue in issues) {
@@ -57,6 +57,21 @@ function createParties(parties, issues){
 }
 
 function assignToParties(ministers, parties){
-  let loyalty = minister["loyalty"], disloyalty = minister["disloyalty"], party;
-  
+  // equation: newStance = oldStance * disloyalty + partyStance * loyalty
+  for (minister in ministers){
+      let stance, stances = ministers[minister];
+      
+      let partyNames = Object.keys(parties);
+      let partyName = pick_one(partyNames), partyStance = parties[partyName];
+      if(parties[partyName]["ministers"] > 0 ) {
+        for(issue in stances){
+          let loyalty = stances["loyalty"], disloyalty = stances["disloyalty"];
+          if( !(issue == "disloyalty" && issue == "loyalty" && issue == "party" )){
+            ministers[minister][issue] = stances[issue] * disloyalty + partyStance[issue] * loyalty;
+          }
+        }
+        ministers["minister"]["party"] = partyName;
+        parties[partyName]["ministers"] -= 1;
+      }   
+  }
 }
