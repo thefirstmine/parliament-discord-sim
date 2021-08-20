@@ -1,3 +1,5 @@
+const PARLIAMENT_SEATS = 101;
+
 function weightedRandom(prob) {
   let i, sum=0, r=Math.random();
   for (i in prob) {
@@ -6,8 +8,13 @@ function weightedRandom(prob) {
   }
 }
 
-function equal_choice(list){
-  
+function pick_one(list){
+  // wrapper function for picking one item in a uniform distribution 
+  let weight = 1/list.length, dict = {};
+  for(item of list){
+    dict[item] = weight;
+  }
+  return weightedRandom(dict);
 }
 
 function weightedRandomDistrib(min,max,mean,varianceFactor) {
@@ -19,7 +26,7 @@ function weightedRandomDistrib(min,max,mean,varianceFactor) {
   return chance.weighted(seq, prob);
 }
 
-function createMinisters(list,issues,parties){
+function createMinisters(list,issues){
   let minister, issue, stance=0, stances={};
   for (minister in list){
     for (issue in issues) {
@@ -35,7 +42,21 @@ function createMinisters(list,issues,parties){
   return list
 }
 
-function updateMinister(minister, parties){
+function createParties(parties, issues){
+  let party, issue, stance=0, stances={};
+  for (partyName in parties){
+    let representation = parties[partyName];
+    for (issue in issues) {
+      stances[issue] = Math.random();
+    }
+    stances["ministers"] = PARLIAMENT_SEATS * representation;
+    parties[partyName] = stances
+    stances = {}
+  }
+  return parties
+}
+
+function assignToParties(ministers, parties){
   let loyalty = minister["loyalty"], disloyalty = minister["disloyalty"], party;
   
 }
