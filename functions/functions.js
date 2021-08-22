@@ -59,61 +59,84 @@ function createParties(parties, issues){
 function assignToParties(ministers, parties){
   // equation: newStance = oldStance * disloyalty + partyStance * loyalty
   for (minister in ministers){
-      let stance, stances = ministers[minister];
+      let issue, stances = ministers[minister];
       
       let partyNames = Object.keys(parties);
+
       let partyName = pick_one(partyNames), partyStance = parties[partyName];
+
       if(parties[partyName]["ministers"] > 0 ) {
+
         for(issue in stances){
+
           let loyalty = stances["loyalty"], disloyalty = stances["disloyalty"];
+
           if( !(issue == "disloyalty" && issue == "loyalty" && issue == "party" )){
+
             ministers[minister][issue] = stances[issue] * disloyalty + partyStance[issue] * loyalty;
+
           }
+
         }
+
         ministers["minister"]["party"] = partyName;
+
         parties[partyName]["ministers"] -= 1;
+        
       }   
   }
 }
 
 function getDistance(minister, bill, issues){
+
   let stanceSqDistance = issues.map( (issue) => Math.pow(minister[issue]-bill[issue], 2) );
+
   return stanceSqDistance.reduce( (accumlatedSum, arrayItem) => accumlatedSum + arrayItem );
+
 }
 
 function vote(ministers, bills, issues){
-  let aye = 0, no = 0, votes = Object.keys(ministers).length;
+
+  let bill, minister, aye = 0, no = 0, votes = Object.keys(ministers).length;
+
   for (bill in bills){
+
     for(minister in ministers){
       
       let distance = Math.SQRT2( getDistance(ministers[minister], bills[bill], issues) )
 
-      const STRONGLY_AGREE = (distance) => (distance >= 0 && distance < 0.5) ? true : false;
+      const STRONGLY_AGREE = (distance) => (distance >= 0 && distance < 0.5);
 
-      const PARTIALLY_AGREE = (distance) => (distance >= 0.5 && distance < 1) ? true : false;
+      const PARTIALLY_AGREE = (distance) => (distance >= 0.5 && distance < 1);
 
-      const ABSTAIN = (distance) => (distance == 1) ? true : false;
+      const ABSTAIN = (distance) => (distance == 1);
 
-      const PARTIALLY_DISAGREE = (distance) => (distance > 1 && distance < 1.5) ? true : false;
+      const PARTIALLY_DISAGREE = (distance) => (distance > 1 && distance < 1.5);
 
-      const STRONGLY_DISAGREE = (distance) => (distance >= 1.5) ? true : false;
+      const STRONGLY_DISAGREE = (distance) => (distance >= 1.5);
 
       switch(distance){
+
         case STRONGLY_AGREE(distance):
           aye += 1;
           break;
+
         case PARTIALLY_AGREE(distance):
           aye += 1;
           break;
+
         case ABSTAIN(distance):
           votes -= 1;
           break;
+
         case PARTIALLY_DISAGREE(distance):
           no += 1;
           break;
+
         case STRONGLY_DISAGREE(distance):
           no += 1;
           break;
+
         default:
           // do nothing yet, I am still thinking what to do here
       }
