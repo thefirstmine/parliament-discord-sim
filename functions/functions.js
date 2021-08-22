@@ -41,7 +41,7 @@ function weightedRandomDistrib(min,max,mean,varianceFactor) {
   }
 
   return chance.weighted(seq, prob);
-  
+
 }
 
 function createMinisters(list,issues){
@@ -139,7 +139,8 @@ function getDistance(minister, bill, issues){
 
 function vote(ministers, bills, issues){
 
-  let bill, minister, aye = 0, no = 0, votes = Object.keys(ministers).length;
+  let bill, minister;
+  let aye = 0, no = 0, votes = Object.keys(ministers).length;
 
   for (bill in bills){
 
